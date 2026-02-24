@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DeleteIcon from '@mui/icons-material/Delete';
-import "../../public/TopicList.css";
+import "../styles/TopicList.css";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 

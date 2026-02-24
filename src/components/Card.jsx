@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../../public/Card.css";
+import "../styles/Card.css";
 
 function Card(props) {
     const [viewAnswer, setViewAnswer] = useState(false);

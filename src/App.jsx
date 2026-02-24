@@ -5,6 +5,7 @@ import Card from './components/Card.jsx';
 import Home from './components/Home.jsx';
 import CardPage from './components/CardPage.jsx';
 import NewTopicForm from './components/NewTopicForm.jsx';
+import Login from './components/login.jsx';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -12,7 +13,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/card-page/:id" element={<CardPage />} />
         <Route path="/new-topic-form" element={<NewTopicForm /> } />
       </Routes>

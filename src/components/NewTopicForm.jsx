@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import "../../public/NewTopicForm.css";
+import "../styles/NewTopicForm.css";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -27,11 +27,16 @@ function NewTopicForm() {
                 formData.append("file", file);
             }
 
-            await axios.post(`${backendURL}/cardGenerator`, formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                },
-            });
+            // await axios.post(`${backendURL}/cardGenerator`, formData, {
+            //     headers: {
+            //         "Content-Type": "multipart/form-data"
+            //     },
+            // });
+
+            await axios.post(
+                `${backendURL}/cardGenerator`, formData,
+                { withCredentials: true }
+            );
 
             setSuccess(true);
             // Reset form

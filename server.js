@@ -5,6 +5,9 @@ import { GoogleGenAI, createUserContent, createPartFromUri, } from "@google/gena
 import mongoose from "mongoose";
 import cors from "cors";
 import multer from "multer";
+import passport from "passport";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import session from "express-session";
 
 
 
@@ -15,6 +18,8 @@ app.use(express.json());
 const allowedOrigins = ["http://localhost:5173"];
 const upload = multer({ dest: "uploads/" });
 
+const backendURL = process.env.VITE_BACKEND_URL;
+
 app.use(
   cors({
     origin: allowedOrigins,
@@ -23,11 +28,22 @@ app.use(
   })
 );
 
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 
 mongoose.connect(process.env.MONGO_URI);
 
 const ai = new GoogleGenAI({});
+
+const userSchema = new mongoose.Schema({
+  googleId: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
+  name: String,
+});
+
 
 const topics = new mongoose.Schema({
   title: { type: String, required: true },
@@ -35,18 +51,79 @@ const topics = new mongoose.Schema({
 })
 
 const queCardShema = new mongoose.Schema({
-  userId: { type: Number, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   topics: [topics]
 });
 
 
 const Topic = mongoose.model("topic", topics);
 const QueCard = mongoose.model("queCard", queCardShema);
+const User = mongoose.model("User", userSchema);
+
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) =>
+  User.findById(id)
+    .then((user) => done(null, user))
+    .catch((err) => done(err, null))
+);
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:3000/auth/google/callback",
+    },
+    async (_, __, profile, done) => {
+      try {
+        let user = await User.findOne({ googleId: profile.id });
+
+        if (!user) {
+          user = await User.create({
+            googleId: profile.id,
+            email: profile.emails[0].value,
+            name: profile.displayName,
+          });
+        }
+
+        done(null, user);
+      } catch (err) {
+        done(err, null);
+      }
+    }
+  )
+);
+
+// -------------------- GOOGLE ROUTES --------------------
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function (req, res) {
+    res.redirect("http://localhost:5173/home");
+  }
+);
+
+app.get("/check-session", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({ loggedIn: true, user: req.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+function isAuth(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  return res.status(401).json({ error: "Unauthorized" });
+}
 
 
-app.post("/cardGenerator", upload.single("file"), async (req, res) => {
+app.post("/cardGenerator", isAuth, upload.single("file"), async (req, res) => {
   try {
-    const userId = 123;
+    const userId = req.user._id;
     const user = await QueCard.findOne({ userId });
 
 
@@ -107,10 +184,10 @@ app.post("/cardGenerator", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/fetchTopicList", async (req, res) => {
+app.get("/fetchTopicList", isAuth, async (req, res) => {
 
   try {
-    const userId = 123;
+    const userId = req.user._id;
     const result = await QueCard.findOne({ userId });
 
     if (!result) {
@@ -127,9 +204,9 @@ app.get("/fetchTopicList", async (req, res) => {
 
 });
 
-app.get("/fetchTopic/:id", async (req, res) => {
+app.get("/fetchTopic/:id", isAuth, async (req, res) => {
   try {
-    const userId = 123;
+    const userId = req.user._id;
     const result = await QueCard.findOne({ userId });
 
     if (!result) {
@@ -151,6 +228,13 @@ app.get("/fetchTopic/:id", async (req, res) => {
   catch (err) {
     return res.status(500).json({ error: err.message });
   }
+});
+
+app.delete("/deleteTopic/:id", isAuth, async (req, res) => {
+  const user = await QueCard.findOne({ userId: req.user._id });
+  user.topics = user.topics.filter(t => t._id != req.params.id);
+  await user.save();
+  res.json({ success: true });
 });
 
 app.listen(3000, () => {

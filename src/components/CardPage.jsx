@@ -4,7 +4,7 @@ import axios from "axios";
 import Card from "./Card";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import "../../public/CardPage.css";
+import "../styles/CardPage.css";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
