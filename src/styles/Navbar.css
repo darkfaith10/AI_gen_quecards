@@ -1,0 +1,79 @@
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    background: linear-gradient(135deg, #f5b85f, #f39c12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+
+.navbar-left-container,
+.navbar-right-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-right-container {
+    margin-left: auto;
+}
+
+
+.navbar-items {
+    display: flex;
+    align-items: center;
+}
+
+
+.navbar-items button {
+    all: unset;
+
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1f2937;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+}
+
+
+.navbar-items button:hover {
+    background-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+
+.navbar-items button:focus-visible {
+    outline: 2px solid rgba(0, 0, 0, 0.4);
+    outline-offset: 2px;
+}
+
+
+.navbar-left-container .navbar-items:first-child button {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #111827;
+}
+
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 16px;
+    }
+
+    .navbar-items button {
+        font-size: 14px;
+        padding: 4px 6px;
+    }
+}

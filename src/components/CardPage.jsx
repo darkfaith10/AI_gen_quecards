@@ -5,6 +5,7 @@ import Card from "./Card";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import "../styles/CardPage.css";
+import Navbar from "./Navbar";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -40,7 +41,8 @@ function CardPage() {
         setCurrent((prev) => (prev === totalCards - 1 ? 0 : prev + 1));
     }
 
-    return (
+    return (<>
+        <Navbar />
         <div className="cardpage-container">
             <h1 className="cardpage-title">{topic.title}</h1>
 
@@ -62,6 +64,8 @@ function CardPage() {
                 {current + 1} / {totalCards}
             </p>
         </div>
+    </>
+
     );
 }
 

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DeleteIcon from '@mui/icons-material/Delete';
 import "../styles/TopicList.css";
+import Navbar from "./Navbar";
 
 const backendURL = import.meta.env.VITE_BACKEND_URL;
 
@@ -16,7 +17,7 @@ function TopicList() {
     }
 
     async function handleDelete(e, topicId) {
-        e.stopPropagation(); // Prevent navigation when clicking delete
+        e.stopPropagation();
 
         if (window.confirm("Are you sure you want to delete this topic?")) {
             try {
@@ -47,31 +48,35 @@ function TopicList() {
     }
 
     return (
-        <div className="topiclist-container">
-            <div className="topiclist-wrapper">
-                <h1 className="topiclist-title">My QueCards</h1>
-                <p className="topiclist-subtitle">Select a topic to start studying</p>
+        <>
+            <Navbar />
+            <div className="topiclist-container">
+                <div className="topiclist-wrapper">
+                    <h1 className="topiclist-title">My QueCards</h1>
+                    <p className="topiclist-subtitle">Select a topic to start studying</p>
 
-                {topicsList.length === 0 ? (
-                    <div className="empty-state">
-                        <p>No topics yet. Create your first QueCard!</p>
-                    </div>
-                ) : (
-                    <ul className="topic-list">
-                        {topicsList.map((topic) => (
-                            <li key={topic._id} className="topic-item">
-                                <div className="topic-card" onClick={() => handleTopicClick(topic)} >
-                                    <span className="topic-title">{topic.title}</span>
-                                    <button className="delete-button" onClick={(e) => handleDelete(e, topic._id)} aria-label="Delete topic" >
-                                        <DeleteIcon />
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                    {topicsList.length === 0 ? (
+                        <div className="empty-state">
+                            <p>No topics yet. Create your first QueCard!</p>
+                        </div>
+                    ) : (
+                        <ul className="topic-list">
+                            {topicsList.map((topic) => (
+                                <li key={topic._id} className="topic-item">
+                                    <div className="topic-card" onClick={() => handleTopicClick(topic)} >
+                                        <span className="topic-title">{topic.title}</span>
+                                        <button className="delete-button" onClick={(e) => handleDelete(e, topic._id)} aria-label="Delete topic" >
+                                            <DeleteIcon />
+                                        </button>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
+
     );
 }
 
