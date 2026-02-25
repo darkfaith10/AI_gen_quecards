@@ -19,6 +19,7 @@ const allowedOrigins = ["http://localhost:5173", "https://ai-gen-quecards.vercel
 const upload = multer({ dest: "uploads/" });
 
 const backendURL = process.env.VITE_BACKEND_URL;
+const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -237,6 +238,6 @@ app.delete("/deleteTopic/:id", isAuth, async (req, res) => {
   res.json({ success: true });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on Port: 3000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
