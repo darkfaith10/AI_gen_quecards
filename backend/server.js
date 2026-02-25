@@ -18,7 +18,8 @@ app.use(express.json());
 const allowedOrigins = ["http://localhost:5173", "https://ai-gen-quecards.vercel.app"];
 const upload = multer({ dest: "uploads/" });
 
-const backendURL = process.env.VITE_BACKEND_URL;
+const BACKEND_URL = process.env.BACKEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3000;
 
 app.use(
@@ -75,7 +76,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: `${BACKEND_URL}/auth/google/callback`,
     },
     async (_, __, profile, done) => {
       try {
@@ -104,7 +105,7 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
-    res.redirect("http://localhost:5173/home");
+    res.redirect(`${FRONTEND_URL}/home`);
   }
 );
 
