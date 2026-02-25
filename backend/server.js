@@ -15,7 +15,7 @@ import session from "express-session";
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5173", "https://ai-gen-quecards.vercel.app"];
 const upload = multer({ dest: "uploads/" });
 
 const backendURL = process.env.VITE_BACKEND_URL;
