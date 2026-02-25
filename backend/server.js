@@ -78,11 +78,6 @@ const User = mongoose.model("User", userSchema);
 
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-console.log("BACKEND_URL:", process.env.BACKEND_URL);
-console.log(
-  "Google Callback:",
-  `${process.env.BACKEND_URL}/auth/google/callback`
-);
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser((id, done) =>
