@@ -15,7 +15,7 @@ import session from "express-session";
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ["http://localhost:5173", "https://ai-gen-quecards-p82f.vercel.app"];
+const allowedOrigins = [FRONTEND_URL]
 const upload = multer({ dest: "uploads/" });
 
 const BACKEND_URL = process.env.BACKEND_URL;
@@ -29,8 +29,20 @@ app.use(
     credentials: true,
   })
 );
+app.set("trust proxy", 1);
 
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,
+      sameSite: "none",
+    },
+  })
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -63,6 +75,12 @@ const QueCard = mongoose.model("queCard", queCardShema);
 const User = mongoose.model("User", userSchema);
 
 // const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+console.log("BACKEND_URL:", process.env.BACKEND_URL);
+console.log(
+  "Google Callback:",
+  `${process.env.BACKEND_URL}/auth/google/callback`
+);
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser((id, done) =>
@@ -100,6 +118,8 @@ passport.use(
 
 // -------------------- GOOGLE ROUTES --------------------
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+
 
 app.get(
   "/auth/google/callback",
