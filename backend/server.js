@@ -15,12 +15,14 @@ import session from "express-session";
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = [FRONTEND_URL]
+
 const upload = multer({ dest: "uploads/" });
 
 const BACKEND_URL = process.env.BACKEND_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const PORT = process.env.PORT || 3000;
+
+const allowedOrigins = [FRONTEND_URL]
 
 app.use(
   cors({
